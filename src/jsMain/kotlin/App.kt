@@ -1,44 +1,36 @@
-import react.*
-import kotlinx.coroutines.*
-import react.dom.html.ReactHTML.h1
-import react.dom.html.ReactHTML.li
-import react.dom.html.ReactHTML.ul
-
-private val scope = MainScope()
+import common.RootPaths
+import pages.*
+import react.FC
+import react.Props
+import react.createElement
+import react.router.Route
+import react.router.Routes
+import react.router.dom.BrowserRouter
 
 val App = FC<Props> {
-    var shoppingList by useState(emptyList<ShoppingListItem>())
-
-    useEffectOnce {
-        scope.launch {
-            shoppingList = getShoppingList()
-        }
-    }
-
-    h1 {
-        +"Full-Stack Shopping List"
-    }
-    ul {
-        shoppingList.sortedByDescending(ShoppingListItem::priority).forEach { item ->
-            li {
-                key = item.toString()
-                onClick = {
-                    scope.launch {
-                        deleteShoppingListItem(item)
-                        shoppingList = getShoppingList()
-                    }
-                }
-                +"[${item.priority}] ${item.desc} "
+    BrowserRouter {
+        Routes {
+            Route {
+                path = "/"
+                index = true
+                element = createElement(TodoPage)
             }
-        }
-    }
-    InputComponent {
-        onSubmit = { input ->
-            val cartItem = ShoppingListItem(input.replace("!", ""), input.count { it == '!' })
-            scope.launch {
-                addShoppingListItem(cartItem)
-                shoppingList = getShoppingList()
+            Route {
+                path = RootPaths().Heroes.toString()
+                element = createElement(HeroesIndexPage)
             }
+            Route {
+                path = RootPaths().Heroes.New.toString()
+                element = createElement(HeroNewPage)
+            }
+            Route {
+                path = RootPaths().Heroes.Id("/:id").toString()
+                element = createElement(HeroPage)
+            }
+//            Route {
+//                path = RootPaths().Commit.toString()
+//                element = createElement(CommitPage)
+//            }
         }
     }
 }

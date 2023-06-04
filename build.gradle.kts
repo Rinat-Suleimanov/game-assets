@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 val kotlinVersion = "1.7.20-Beta"
 val serializationVersion = "1.3.3"
 val ktorVersion = "2.0.3"
+val exposedVersion = "0.41.1"
 val logbackVersion = "1.2.11"
 val kotlinWrappersVersion = "1.0.0-pre.354"
 val kmongoVersion = "4.5.0"
@@ -32,8 +33,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
             }
         }
 
@@ -46,26 +46,33 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
+                implementation("io.ktor:ktor-server-netty:$ktorVersion")
                 implementation("io.ktor:ktor-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-server-cors:$ktorVersion")
                 implementation("io.ktor:ktor-server-compression:$ktorVersion")
                 implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-server-netty:$ktorVersion")
+                implementation("io.ktor:ktor-server-caching-headers:$ktorVersion")
+                implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+                implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+                implementation("org.xerial:sqlite-jdbc:3.36.0.1")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
-                implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")
             }
         }
 
         val jsMain by getting {
             dependencies {
+                fun kotlinw(target: String): String = "org.jetbrains.kotlin-wrappers:kotlin-$target"
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation(project.dependencies.enforcedPlatform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:$kotlinWrappersVersion"))
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
+                implementation(kotlinw("react"))
+                implementation(kotlinw("react-dom"))
+                implementation(kotlinw("react-router-dom"))
+                implementation(kotlinw("emotion"))
+                implementation(kotlinw("mui"))
             }
         }
     }
