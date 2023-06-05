@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 const val USER_ID = "first_user_id"
+//const val USER_ID = "second_user_id"
 
 object DbService {
 
